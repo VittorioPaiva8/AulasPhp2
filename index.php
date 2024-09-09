@@ -1,20 +1,22 @@
 <?php
 
-class Cachorro
+
+class Data
 {
-    function latir()
+    public $dia = 1;
+    public $mes = 1;
+    public $ano = 1970;
+
+    public function apresentar()
     {
-        echo "Auau krl";
-    }
-    function andar($m)
-    {
-        echo "\nO cachorro andou $m metros esse ultimo dia";
+        echo "A data é $this->dia/$this->mes/$this->ano;";
     }
 }
 
-$frederico_o_cao_da_morte = new Cachorro;
+$d1 = new Data();
+$d1->apresentar();
 
-$FredyNeto = new Cachorro;
-
-$frederico_o_cao_da_morte->latir();
-$FredyNeto->andar(120);
+$d2 = new Data();
+$d2->dia = 24;
+$d2->ano = 2004;
+$d2->apresentar();
