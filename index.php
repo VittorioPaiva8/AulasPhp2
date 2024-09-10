@@ -1,7 +1,19 @@
 <?php
 
 
-class Data
+
+class Pessoa
+{
+    public $nome = '';
+    public $idade = 1;
+    public $diaNascimento = 1;
+    public $mesNascimento = 1;
+    public $anoNascimento = 1;
+}
+
+
+
+class DataAtual
 {
     public $dia = 1;
     public $mes = 1;
@@ -13,10 +25,10 @@ class Data
     }
 }
 
-$d1 = new Data();
+$d1 = new DataAtual();
 $d1->apresentar();
 
-$d2 = new Data();
+$d2 = new DataAtual();
 $d2->dia = 24;
 $d2->ano = 2004;
 $d2->apresentar();
