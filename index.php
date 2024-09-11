@@ -1,34 +1,41 @@
 <?php
 
-
-
 class Pessoa
 {
-    public $nome = '';
+    public $nome = 'Pedro';
     public $idade = 1;
     public $diaNascimento = 1;
     public $mesNascimento = 1;
     public $anoNascimento = 1;
-}
+    public $hoje;
 
-
-
-class DataAtual
-{
-    public $dia = 1;
-    public $mes = 1;
-    public $ano = 1970;
-
-    public function apresentar()
+    public function __construct()
     {
-        echo "A data é $this->dia/$this->mes/$this->ano;";
+        $this->hoje = new DateTime();
+    }
+
+    public function calcularIdade()
+    {
+
+        $dataNascimento = new DateTime("{$this->anoNascimento}-{$this->mesNascimento}-{$this->diaNascimento}");
+
+        $intervalo = $this->hoje->diff($dataNascimento);
+
+        $this->idade = $intervalo->y;
+
+        return $this->idade;
+    }
+
+    public function retornaNome()
+    {
+        echo "\nO nome da pessoa é {$this->nome} ";
     }
 }
 
-$d1 = new DataAtual();
-$d1->apresentar();
+$pessoa = new Pessoa();
+$pessoa->diaNascimento = 15;
+$pessoa->mesNascimento = 9;
+$pessoa->anoNascimento = 1993;
 
-$d2 = new DataAtual();
-$d2->dia = 24;
-$d2->ano = 2004;
-$d2->apresentar();
+echo "Idade: " . $pessoa->calcularIdade();
+echo $pessoa->retornaNome();
