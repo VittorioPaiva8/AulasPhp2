@@ -93,13 +93,13 @@ function SegundoMenu()
 
     switch ($chamarMenu) {
         case 1:
-            realizarVenda();
+            homeLoja();
             break;
         case 2:
             realizarAtendimento();
             break;
         case 3:
-            exit;
+            homeLoja();
             break;
     }
 }
@@ -109,21 +109,17 @@ function homeLoja()
 {
     global $valor_total_vendas;
     echo "Total de vendas: R$ " . number_format($valor_total_vendas, 2, ',', '.') . "\n";
-    echo "\n 1-Venda \n 2-Atendimento \n 3-Verificar log \n 4-Deslogar: ";
+    echo "\n 1-Venda \n 2-Verificar log \n 3-Deslogar: ";
     $menu = readline();
 
     switch ($menu) {
         case 1:
             realizarVenda();
             break;
-
         case 2:
-            realizarAtendimento();
-            break;
-        case 3:
             exibirLog();
             break;
-        case 4:
+        case 3:
             deslogar();
             break;
     }
