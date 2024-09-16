@@ -1,31 +1,50 @@
 <?php
 
-class Animais
+abstract class Animais
 {
-    public $nome = '';
-    public $raca = '';
-    public $peso = 1;
-    public $porte = '';
-}
+    private $nome;
+    private $raca;
+    private $peso;
+    private $tamanho;
 
-class Gatos
-{
-    public function falar()
-    {
-        echo "Miau krl";
+    public function __construct($nome, $raca, $peso, $tamanho) {
+        $this->nome = $nome;
+        $this->raca = $raca;
+        $this->peso = $peso;
+        $this->tamanho = $tamanho;
     }
-}
-class Cachorros
-{
-    public function falar()
-    {
-        echo "Au-Au vadia";
+
+    public function getNome() {
+        return $this->nome;
     }
-}
-class Coelho
-{
-    public function falar()
-    {
-        echo "Sons de coelho";
+
+    public function setNome($nome) {
+        $this->nome = $nome;
     }
+
+    public function getRaca() {
+        return $this->raca;
+    }
+
+    public function setRaca($raca) {
+        $this->raca = $raca;
+    }
+
+    public function getPeso() {
+        return $this->peso;
+    }
+
+    public function setPeso($peso) {
+        $this->peso = $peso;
+    }
+
+    public function getTamanho() {
+        return $this->tamanho;
+    }
+
+    public function setTamanho($tamanho) {
+        $this->tamanho = $tamanho;
+    }
+
+    abstract public function falar();
 }

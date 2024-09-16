@@ -1,40 +1,52 @@
 <?php
 
 $usuarios = [
-    'admin' => 123
+    'admin' => '123'
 ];
+
+$log = [];
+$valor_total_vendas = 0.0;
+$logado = false;
+
+include 'Animal.php';
+include 'cachorro.php';
+include 'gato.php';
+include 'coelho.php';
+include 'produto.php';
+include 'venda.php';
+include 'humanos.php';
+include 'funcionarios.php';
+include 'vendedor.php';
+include 'veterinario.php';
+include 'balconista.php';
+
 function login()
 {
     global $logado, $usuarios;
-    $usuario = readline("Digite seu usuario: ");
+    $usuario = readline("Digite seu usuário: ");
     $senha = readline("Digite sua senha: ");
 
-    if (array_key_exists($usuario, $usuarios)) {
-        if ($senha == $usuarios[$usuario]) {
-            echo 'Bem vindo 3';
-            registrarLog("Usuário Fez login");
-            $logado = 1;
-        }
-    } else if ($usuario == '' || $senha == '') {
-        $logado = 2;
-        echo 'Preencha os campos';
+    if (array_key_exists($usuario, $usuarios) && $senha == $usuarios[$usuario]) {
+        echo "Bem-vindo, $usuario!\n";
+        registrarLog("Usuário fez login: $usuario");
+        $logado = true;
     } else {
-        echo "Usuario incorreto";
-        $logado = 2;
+        echo "Usuário ou senha incorretos.\n";
+        $logado = false;
     }
 }
+
 function deslogar()
 {
     global $logado;
-
-    registrarLog("Usuário $logado fez logout");
+    registrarLog("Usuário deslogou");
     $logado = false;
     echo "Deslogado com sucesso!\n";
 }
+
 function cadastrarUsuario()
 {
     global $usuarios;
-
     limparTela();
     echo "Digite o novo login: ";
     $login = trim(fgets(STDIN));
@@ -66,10 +78,12 @@ function exibirLog()
     }
 }
 
+
 function limparTela()
 {
     system('clear');
 }
+
 function primeiroMenu()
 {
     $chamarMenu = readline("1-Login 2-Cadastrar 3-Sair: ");
@@ -83,33 +97,32 @@ function primeiroMenu()
             break;
         case 3:
             exit;
-            break;
     }
 }
 
-function SegundoMenu()
+function segundoMenu()
 {
-    $chamarMenu = readline("Quem esta realizando o atendimento: 1-Vendedor 2-Veterinario 3-Balconista: ");
+    $chamarMenu = readline("Quem está realizando o atendimento: 1-Vendedor 2-Veterinário 3-Balconista 4-Gerenciar Produtos: ");
 
     switch ($chamarMenu) {
         case 1:
+        case 3:
             homeLoja();
             break;
         case 2:
             realizarAtendimento();
             break;
-        case 3:
-            homeLoja();
+        case 4:
+            gerenciarProdutos();
             break;
     }
 }
-
 
 function homeLoja()
 {
     global $valor_total_vendas;
     echo "Total de vendas: R$ " . number_format($valor_total_vendas, 2, ',', '.') . "\n";
-    echo "\n 1-Venda \n 2-Verificar log \n 3-Deslogar: ";
+    echo "\n1-Venda \n2-Verificar log \n3-Deslogar: ";
     $menu = readline();
 
     switch ($menu) {
@@ -124,50 +137,112 @@ function homeLoja()
             break;
     }
 }
+
 function realizarVenda()
 {
     global $valor_total_vendas;
 
     limparTela();
-    echo "Digite o nome do item vendido: ";
-    $item = trim(fgets(STDIN));
+    echo "Digite o nome do produto: ";
+    $nomeProduto = trim(fgets(STDIN));
 
-    echo "Digite o valor da venda: ";
-    $valor = trim(fgets(STDIN));
+    echo "Digite o preço do produto: ";
+    $precoProduto = trim(fgets(STDIN));
 
-    if (is_numeric($valor) && $valor > 0) {
-        $valor_total_vendas += $valor;
-        registrarLog("Venda realizada: Item - $item, Valor - $valor");
+    echo "Digite a quantidade do produto: ";
+    $quantidadeProduto = trim(fgets(STDIN));
+
+    if (is_numeric($precoProduto) && is_numeric($quantidadeProduto) && $precoProduto > 0 && $quantidadeProduto > 0) {
+        $produto = new Produto($nomeProduto, (float)$precoProduto, (int)$quantidadeProduto);
+        $humano = new Humano("Usuário", 30, "Endereço", "Contato"); // Substitua com o humano logado
+        $venda = $humano->criarVenda();
+        $venda->adicionarProduto($produto, $quantidadeProduto);
+        $valor_total_vendas += $produto->getPreco() * $quantidadeProduto;
+        registrarLog("Venda registrada: Produto - $nomeProduto, Quantidade - $quantidadeProduto, Preço - R$ $precoProduto");
         echo "Venda registrada com sucesso!\n";
+        $venda->exibirVenda();
     } else {
-        echo "Valor inválido.\n";
+        echo "Dados inválidos.\n";
     }
 }
+
 function realizarAtendimento()
 {
     global $valor_total_vendas;
 
     limparTela();
-    echo "Digite o nome do Procedimento realizado: ";
-    $item = trim(fgets(STDIN));
+    echo "Digite o nome do procedimento realizado: ";
+    $procedimento = trim(fgets(STDIN));
 
     echo "Digite o valor: ";
     $valor = trim(fgets(STDIN));
 
     if (is_numeric($valor) && $valor > 0) {
         $valor_total_vendas += $valor;
-        registrarLog("Venda realizada: Item - $item, Valor - $valor");
-        echo "Venda registrada com sucesso!\n";
+        registrarLog("Atendimento realizado: Procedimento - $procedimento, Valor - R$ $valor");
+        echo "Atendimento registrado com sucesso!\n";
     } else {
         echo "Valor inválido.\n";
     }
 }
-$logado = false;
+function gerenciarProdutos()
+{
+    global $produtos;
+    $produtos = [];
+
+    while (true) {
+        limparTela();
+        echo "Gerenciamento de Produtos:\n";
+        echo "1-Adicionar Produto\n2-Listar Produtos\n3-Voltar\n";
+        $opcao = readline("Escolha uma opção: ");
+
+        switch ($opcao) {
+            case 1:
+                adicionarProduto();
+                break;
+            case 2:
+                listarProdutos();
+                break;
+            case 3:
+                return;
+        }
+    }
+}
+
+function adicionarProduto()
+{
+    global $produtos;
+    echo "Digite o nome do produto: ";
+    $nome = trim(fgets(STDIN));
+
+    echo "Digite o preço do produto: ";
+    $preco = trim(fgets(STDIN));
+
+    echo "Digite a quantidade do produto: ";
+    $quantidade = trim(fgets(STDIN));
+
+    if (is_numeric($preco) && is_numeric($quantidade) && $preco > 0 && $quantidade > 0) {
+        $produtos[] = new Produto($nome, (float)$preco, (int)$quantidade);
+        registrarLog("Produto adicionado: Nome - $nome, Preço - R$ $preco, Quantidade - $quantidade");
+        echo "Produto adicionado com sucesso!\n";
+    } else {
+        echo "Dados inválidos.\n";
+    }
+}
+
+function listarProdutos()
+{
+    global $produtos;
+    echo "Lista de Produtos:\n";
+    foreach ($produtos as $produto) {
+        echo "Nome: " . $produto->getNome() . ", Preço: R$ " . number_format($produto->getPreco(), 2, ',', '.') . ", Quantidade: " . $produto->getQuantidade() . "\n";
+    }
+}
 
 while (true) {
-    if ($logado == 1) {
+    if ($logado) {
         segundoMenu();
-    } else if ($logado == 2) {
+    } else {
         primeiroMenu();
     }
 }
